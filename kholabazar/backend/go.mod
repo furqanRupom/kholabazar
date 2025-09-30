@@ -1,0 +1,3 @@
+module kholabazar
+
+go 1.23.3
