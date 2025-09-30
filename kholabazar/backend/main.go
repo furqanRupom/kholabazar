@@ -20,27 +20,15 @@ var productList []Product
 func getProduct(w http.ResponseWriter, r *http.Request) {
 	handleCors(w)
 	handlePreFlightReq(w, r)
-	if r.Method != http.MethodGet {
-		http.Error(w, "Please sent req in GET", 400)
-		return
-	}
-
 	sendData(w,productList,200)
 }
 
 func createProduct(w http.ResponseWriter, r *http.Request) {
 	handleCors(w)
 	handlePreFlightReq(w, r)
-	if r.Method != http.MethodPost {
-		http.Error(w, "Please sent req in Post", 400)
-		return
-	}
 	var newProduct Product
-	decoder := json.NewDecoder(r.Body) // name, image, price, this is going to decode from encoded json
-	/*
-		This line tells the decoder to read the JSON from the request body and convert (unmarshal) it into the Go Product struct pointed to by newProduct. It returns an error if decoding fails, which can then be checked and handled
-	*/
-	err := decoder.Decode(&newProduct) // now we are pointing the memory address of the struct where it going to store this decoded data
+	decoder := json.NewDecoder(r.Body) 
+	err := decoder.Decode(&newProduct) 
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Please give me valid JSON", 400)
@@ -48,10 +36,12 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	newProduct.ID = len(productList) + 1
 	productList = append(productList, newProduct)
-
 	sendData(w,newProduct,201)
 }
 
+func root(w http.ResponseWriter, r *http.Request){
+	fmt.Fprintln(w,"Welcome to kholabazar")
+}
 func sendData(w http.ResponseWriter, data interface{}, statusCode int) {
 	w.WriteHeader(statusCode)
 	encoder := json.NewEncoder(w)
@@ -73,10 +63,11 @@ func handlePreFlightReq(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/products", getProduct)          // get all products
-	mux.HandleFunc("/create-product", createProduct) // create new product
+	mux.Handle("GET /",http.HandlerFunc(root))
+	mux.Handle("GET /products", http.HandlerFunc(getProduct))          // get all products
+	mux.Handle("POST /create-product", http.HandlerFunc(createProduct)) // create new product
 	fmt.Println("Server is running on port 8080")
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe("127.0.0.1:8080", mux)
 
 }
 
