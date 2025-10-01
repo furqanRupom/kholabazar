@@ -1,6 +1,7 @@
-package database 
+package database
 
 var ProductList []Product
+
 type Product struct {
 	ID          int     `json:"id"`
 	Name        string  `json:"name"`

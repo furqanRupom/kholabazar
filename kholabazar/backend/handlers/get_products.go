@@ -1,9 +1,11 @@
-package handlers 
+package handlers
+
 import (
-	"net/http"
 	"kholabazar/database"
 	"kholabazar/utils"
+	"net/http"
 )
+
 func GetProducts(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(200)
