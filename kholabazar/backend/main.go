@@ -4,10 +4,6 @@ import (
 	"kholabazar/cmd"
 )
 
-
-
-
 func main() {
 	cmd.Serve()
 }
-

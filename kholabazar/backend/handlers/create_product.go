@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"kholabazar/database"
 	"kholabazar/utils"
+	"net/http"
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -24,4 +24,5 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	newProduct.ID = len(database.ProductList) + 1
 	database.ProductList = append(database.ProductList, newProduct)
 	utils.SendData(w, newProduct, 201)
+
 }
