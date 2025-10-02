@@ -1,8 +1,8 @@
-package cmd
+package rest
 
 import (
-	"kholabazar/handlers"
-	"kholabazar/middleware"
+	"kholabazar/rest/handlers"
+	"kholabazar/rest/middlewares"
 	"net/http"
 )
 
