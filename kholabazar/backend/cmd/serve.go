@@ -3,18 +3,18 @@ package cmd
 import (
 	"fmt"
 	"kholabazar/middleware"
-	"kholabazar/router"
 	"net/http"
 )
 
 func Serve() {
 	mux := http.NewServeMux()
 	manager := middleware.NewManager()
-	manager.Use(middleware.Logger)
-	InitRoutes(mux, manager)
-	globalMux := router.GlobalRouter(mux)
+	manager.Use(middleware.PreFlight,middleware.Cors,middleware.Logger)
+
 	fmt.Println("Server is running on port 8080")
-	err := http.ListenAndServe("127.0.0.1:8080", globalMux)
+	wrappedMux := manager.WrapMux(mux)
+	InitRoutes(mux, manager)
+	err := http.ListenAndServe("127.0.0.1:8080", wrappedMux)
 	if err != nil {
 		fmt.Println("Error starting the server :", err)
 	}
