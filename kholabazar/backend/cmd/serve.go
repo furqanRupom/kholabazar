@@ -6,11 +6,13 @@ import (
 	"kholabazar/rest/handlers/product"
 	"kholabazar/rest/handlers/review"
 	"kholabazar/rest/handlers/user"
+	middleware "kholabazar/rest/middlewares"
 )
 
 func Serve() {
 	conf := config.GetConfig()
-	productHandler := product.NewHandler()
+	middleware := middleware.NewMiddlewares(conf)
+	productHandler := product.NewHandler(middleware)
 	userHandler := user.NewHandler()
 	reviewHandler := review.NewHandler()
 	server := rest.NewServer(
