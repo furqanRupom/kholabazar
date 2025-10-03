@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var config Config
+var config *Config
 
 type Config struct {
 	Version     string
@@ -42,15 +42,17 @@ func loadConfig() {
 		fmt.Println("Port number should be a Number!")
 	}
 	JwtSecret := os.Getenv("JWT_SECRET")
-	config = Config{
+	config = &Config{
 		Version:     version,
 		ServiceName: serviceName,
 		HttpPort:    int(port),
-		JWTSecret: JwtSecret,
+		JWTSecret:   JwtSecret,
 	}
 }
 
-func GetConfig() Config {
-	loadConfig()
+func GetConfig() *Config {
+	if config == nil {
+		loadConfig()
+	}
 	return config
 }

@@ -4,12 +4,11 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"kholabazar/config"
 	"net/http"
 	"strings"
 )
 
-func AuthJWT(next http.Handler) http.Handler {
+func (m *Middlewares) AuthJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := r.Header.Get("Authorization")
 		if header == "" {
@@ -28,13 +27,12 @@ func AuthJWT(next http.Handler) http.Handler {
 			return
 		}
 
-		conf := config.GetConfig()
 
 		jwtHeader := tokenParts[0]
 		jwtClaim := tokenParts[1]
 		jwtSign := tokenParts[2]
 		message := jwtHeader + "." + jwtClaim
-		byteArrSecret := []byte(conf.JWTSecret)
+		byteArrSecret := []byte(m.conf.JWTSecret)
 		byteArrMessage := []byte(message)
 		h := hmac.New(sha256.New, byteArrSecret)
 		h.Write(byteArrMessage)
