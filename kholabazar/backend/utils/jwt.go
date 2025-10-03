@@ -12,14 +12,14 @@ type Header struct {
 	Typ string `json:"typ"`
 }
 type Payload struct {
-	Sub         int `json:"sub"`
+	Sub         int    `json:"sub"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	Email       string `json:"email"`
 	IsShopOwner bool   `json:"is_shop_owner"`
 }
 
-func CreateJWT(p Payload, s string) (string, error) {
+func CreateJWT(p Payload, secret string) (string, error) {
 	header := Header{
 		Alg: "HS256",
 		Typ: "JWT",
@@ -35,7 +35,7 @@ func CreateJWT(p Payload, s string) (string, error) {
 	}
 	payloadB64 := Base64UrlEncode(byteArrPayload)
 	message := headerB64 + "." + payloadB64
-	byteArrSecret := []byte(s)
+	byteArrSecret := []byte(secret)
 	byteArrMessage := []byte(message)
 	h := hmac.New(sha256.New, byteArrSecret)
 	h.Write(byteArrMessage)
@@ -45,6 +45,7 @@ func CreateJWT(p Payload, s string) (string, error) {
 	return jwt, nil
 
 }
+
 
 func Base64UrlEncode(data []byte) string {
 	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(data)
