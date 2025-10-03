@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"kholabazar/config"
 	"kholabazar/database"
 	"kholabazar/utils"
 	"net/http"
@@ -13,6 +14,7 @@ type ReqLogin struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	cnf := config.GetConfig()
 	var reqLogin ReqLogin
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&reqLogin)
@@ -23,7 +25,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	usr := database.Find(reqLogin.Email, reqLogin.Password)
 	if usr == nil {
 		http.Error(w, "User not found!", 404)
+		return
 	}
-	utils.SendData(w, usr, http.StatusCreated)
+	accessToken, err := utils.CreateJWT(utils.Payload{
+		Sub:         usr.ID,
+		FirstName:   usr.FirstName,
+		LastName:    usr.LastName,
+		Email:       usr.Email,
+		IsShopOwner: usr.IsShopOwner,
+	}, cnf.JWTSecret)
+	if err != nil {
+		http.Error(w, "Internal Server", http.StatusInternalServerError)
+		return
+	}
+	utils.SendData(w, accessToken, http.StatusOK)
 
 }
