@@ -21,7 +21,6 @@ type productRepo struct {
 	productList []*Product
 }
 
-
 /* Constructor */
 func NewProductRepo() *productRepo {
 	repo := &productRepo{}
@@ -101,4 +100,3 @@ func generateProductInit(r *productRepo) {
 	}
 	r.productList = append(r.productList, p1, p2, p3, p4)
 }
-

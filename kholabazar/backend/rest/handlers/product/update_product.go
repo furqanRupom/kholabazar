@@ -8,10 +8,19 @@ import (
 	"strconv"
 )
 
+type ReqUpdateProduct struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Image       string  `json:"image"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	Category    string  `json:"category"`
+}
+
 func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
-	var updateProductData repo.Product
+	var req ReqUpdateProduct
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&updateProductData)
+	err := decoder.Decode(&req)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Data is invalid!")
 		return
@@ -34,8 +43,12 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusNotFound, "Product not found!")
 		return
 	}
-	updateProductData.ID = pId
-	h.productRepo.Update(updateProductData)
+	req.ID = pId
+	_, err = h.productRepo.Update(repo.Product(req))
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Product Update failed")
+		return
+	}
 
 	utils.SendData(w, "Product updated successfully!", 200)
 
