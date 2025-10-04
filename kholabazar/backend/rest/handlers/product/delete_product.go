@@ -1,7 +1,6 @@
 package product
 
 import (
-	"kholabazar/database"
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
@@ -16,13 +15,18 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Please give me valid format id", 400)
 	}
 
-	product := database.Get(pId)
-	if product == nil {
-		utils.SendError(w, 404, "Product not found!")
+	product, err := h.productRepo.Get(pId)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Product deletion failed!")
 		return
 	}
-	database.Delete(product.ID)
+	if product == nil {
+		utils.SendError(w, http.StatusNotFound, "Product not found!")
+		return
+	}
 
-	utils.SendData(w, "Product deleted successfully!", 200)
+	h.productRepo.Delete(product.ID)
+
+	utils.SendData(w, "Product deleted successfully!", http.StatusOK)
 
 }

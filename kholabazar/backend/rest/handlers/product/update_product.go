@@ -2,18 +2,18 @@ package product
 
 import (
 	"encoding/json"
-	"kholabazar/database"
+	"kholabazar/repo"
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
 )
 
 func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
-	var updateProductData database.Product
+	var updateProductData repo.Product
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&updateProductData)
 	if err != nil {
-		utils.SendError(w, 403, "Data is invalid!")
+		utils.SendError(w, http.StatusInternalServerError, "Data is invalid!")
 		return
 	}
 
@@ -21,16 +21,22 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 
 	pId, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, "Please give me valid format id", 400)
+		utils.SendError(w, http.StatusInternalServerError, "Please give me valid format id")
+		return
 	}
 
-	product := database.Get(pId)
+	product, err := h.productRepo.Get(pId)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Failed to load product")
+		return
+	}
 	if product == nil {
-		utils.SendError(w, 404, "Product not found!")
+		utils.SendError(w, http.StatusNotFound, "Product not found!")
 		return
 	}
 	updateProductData.ID = pId
-	database.Update(updateProductData)
+	h.productRepo.Update(updateProductData)
+
 	utils.SendData(w, "Product updated successfully!", 200)
 
 }

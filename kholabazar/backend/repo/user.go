@@ -11,7 +11,7 @@ type User struct {
 
 type UserRepo interface {
 	Create(user User) (*User, error)
-	Get(email string, password string) (*User,error)
+	Find(email string, password string) (*User,error)
 }
 
 type userRepo struct {

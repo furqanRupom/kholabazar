@@ -1,5 +1,13 @@
 package user
-type Handler struct {}
-func NewHandler () *Handler {
-	return &Handler{}
+
+import "kholabazar/repo"
+
+type Handler struct {
+	userRepo repo.UserRepo
+}
+
+func NewHandler(userRepo repo.UserRepo) *Handler {
+	return &Handler{
+		userRepo: userRepo,
+	}
 }
