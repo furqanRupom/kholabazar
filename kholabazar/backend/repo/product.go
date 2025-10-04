@@ -1,0 +1,104 @@
+package repo
+
+type Product struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Image       string  `json:"image"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	Category    string  `json:"category"`
+}
+
+type ProductRepo interface {
+	List() ([]*Product, error)
+	Create(product Product) (*Product, error)
+	Get(ID int) (*Product, error)
+	Update(product Product) (*Product, error)
+	Delete(ID int) error
+}
+
+type productRepo struct {
+	productList []*Product
+}
+
+
+/* Constructor */
+func NewProductRepo() *productRepo {
+	repo := &productRepo{}
+	generateProductInit(repo)
+	return repo
+}
+
+func (r *productRepo) Create(product Product) (*Product, error) {
+	product.ID = len(r.productList) + 1
+	newProduct := product
+	r.productList = append(r.productList, &newProduct)
+	return &product, nil
+}
+func (r *productRepo) List() ([]*Product, error) {
+	return r.productList, nil
+
+}
+func (r *productRepo) Get(ID int) (*Product, error) {
+	for _, product := range r.productList {
+		if product.ID == ID {
+			return product, nil
+		}
+	}
+	return nil, nil
+}
+func (r *productRepo) Update(product Product) (*Product, error) {
+	for idx, p := range r.productList {
+		if p.ID == product.ID {
+			r.productList[idx] = &product
+		}
+	}
+	return &product, nil
+}
+func (r *productRepo) Delete(ID int) error {
+	var newProductList []*Product
+	for _, p := range r.productList {
+		if p.ID != ID {
+			newProductList = append(newProductList, p)
+		}
+	}
+	r.productList = newProductList
+	return nil
+}
+
+func generateProductInit(r *productRepo) {
+	p1 := &Product{
+		ID:          1,
+		Name:        "Wireless Headphones",
+		Image:       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop",
+		Price:       99.99,
+		Description: "High-quality wireless headphones with noise cancellation",
+		Category:    "Electronics",
+	}
+	p2 := &Product{
+		ID:          2,
+		Name:        "Cotton T-Shir",
+		Image:       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=200&fit=crop",
+		Price:       19.99,
+		Description: "Comfortable 100% cotton t-shirt in various colors",
+		Category:    "Clothing",
+	}
+	p3 := &Product{
+		ID:          3,
+		Name:        "Coffee Mug",
+		Image:       "https://images.unsplash.com/photo-1520031473529-2c06dea61853?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		Price:       19.99,
+		Description: "Ceramic coffee mug perfect for your morning brew",
+		Category:    "Home",
+	}
+	p4 := &Product{
+		ID:          4,
+		Name:        "Running Shoes",
+		Image:       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop",
+		Price:       79.99,
+		Description: "Lightweight running shoes for all terrains",
+		Category:    "Sports",
+	}
+	r.productList = append(r.productList, p1, p2, p3, p4)
+}
+
