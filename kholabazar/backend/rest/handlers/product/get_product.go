@@ -1,7 +1,6 @@
 package product
 
 import (
-	"kholabazar/database"
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
@@ -12,14 +11,17 @@ func (h *Handler) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	pId, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, "Please give me valid format id", 400)
+		utils.SendError(w, http.StatusInternalServerError, "Please give me valid JSON")
 		return
 	}
 
-	product := database.Get(pId)
+	product,err := h.productRepo.Get(pId)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, "Something went wrong!")
+	}
 	if product == nil {
-		utils.SendError(w, 404,"Product not found!")
+		utils.SendError(w, http.StatusNotFound, "Product not found!")
 		return
 	}
-	utils.SendData(w, product, 200)
+	utils.SendData(w, product, http.StatusOK)
 }

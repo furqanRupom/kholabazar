@@ -1,6 +1,4 @@
-package database
-
-var productList []Product
+package repo
 
 type Product struct {
 	ID          int     `json:"id"`
@@ -11,41 +9,64 @@ type Product struct {
 	Category    string  `json:"category"`
 }
 
-func Store(p Product) Product {
-	p.ID = len(productList) + 1
-	productList = append(productList, p)
-	return p
+type ProductRepo interface {
+	List() ([]*Product, error)
+	Create(product Product) (*Product, error)
+	Get(ID int) (*Product, error)
+	Update(product Product) (*Product, error)
+	Delete(ID int) error
 }
-func List() []Product {
-	return productList
+
+type productRepo struct {
+	productList []*Product
 }
-func Get(productID int) *Product {
-	for _, product := range productList {
-		if product.ID == productID {
-			return &product
+
+/* Constructor */
+func NewProductRepo() *productRepo {
+	repo := &productRepo{}
+	generateProductInit(repo)
+	return repo
+}
+
+func (r *productRepo) Create(product Product) (*Product, error) {
+	product.ID = len(r.productList) + 1
+	newProduct := product
+	r.productList = append(r.productList, &newProduct)
+	return &product, nil
+}
+func (r *productRepo) List() ([]*Product, error) {
+	return r.productList, nil
+
+}
+func (r *productRepo) Get(ID int) (*Product, error) {
+	for _, product := range r.productList {
+		if product.ID == ID {
+			return product, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
-func Update(product Product) {
-	for idx, p := range productList {
+func (r *productRepo) Update(product Product) (*Product, error) {
+	for idx, p := range r.productList {
 		if p.ID == product.ID {
-			productList[idx] = product
+			r.productList[idx] = &product
 		}
 	}
+	return &product, nil
 }
-func Delete(productID int) {
-	var newProductList []Product
-	for _, p := range productList {
-		if p.ID != productID {
+func (r *productRepo) Delete(ID int) error {
+	var newProductList []*Product
+	for _, p := range r.productList {
+		if p.ID != ID {
 			newProductList = append(newProductList, p)
 		}
 	}
-	productList = newProductList
+	r.productList = newProductList
+	return nil
 }
 
-func init() {
-	p1 := Product{
+func generateProductInit(r *productRepo) {
+	p1 := &Product{
 		ID:          1,
 		Name:        "Wireless Headphones",
 		Image:       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop",
@@ -53,7 +74,7 @@ func init() {
 		Description: "High-quality wireless headphones with noise cancellation",
 		Category:    "Electronics",
 	}
-	p2 := Product{
+	p2 := &Product{
 		ID:          2,
 		Name:        "Cotton T-Shir",
 		Image:       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=200&fit=crop",
@@ -61,7 +82,7 @@ func init() {
 		Description: "Comfortable 100% cotton t-shirt in various colors",
 		Category:    "Clothing",
 	}
-	p3 := Product{
+	p3 := &Product{
 		ID:          3,
 		Name:        "Coffee Mug",
 		Image:       "https://images.unsplash.com/photo-1520031473529-2c06dea61853?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -69,7 +90,7 @@ func init() {
 		Description: "Ceramic coffee mug perfect for your morning brew",
 		Category:    "Home",
 	}
-	p4 := Product{
+	p4 := &Product{
 		ID:          4,
 		Name:        "Running Shoes",
 		Image:       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop",
@@ -77,8 +98,5 @@ func init() {
 		Description: "Lightweight running shoes for all terrains",
 		Category:    "Sports",
 	}
-	productList = append(productList, p1)
-	productList = append(productList, p2)
-	productList = append(productList, p3)
-	productList = append(productList, p4)
+	r.productList = append(r.productList, p1, p2, p3, p4)
 }

@@ -2,8 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"kholabazar/config"
-	"kholabazar/database"
 	"kholabazar/utils"
 	"net/http"
 )
@@ -14,17 +12,19 @@ type ReqLogin struct {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	cnf := config.GetConfig()
-	var reqLogin ReqLogin
+	var req ReqLogin
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&reqLogin)
+	err := decoder.Decode(&req)
 	if err != nil {
-		http.Error(w, "Invalid data !", 400)
+		utils.SendError(w, http.StatusBadRequest, "Invalid data!")
 		return
 	}
-	usr := database.Find(reqLogin.Email, reqLogin.Password)
+	usr, err := h.userRepo.Find(req.Email, req.Password)
+	if err != nil {
+		utils.SendError(w, http.StatusBadRequest, "User find failed!")
+	}
 	if usr == nil {
-		http.Error(w, "User not found!", 404)
+		utils.SendError(w, http.StatusNotFound, "User not found!")
 		return
 	}
 	accessToken, err := utils.CreateJWT(utils.Payload{
@@ -33,9 +33,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		LastName:    usr.LastName,
 		Email:       usr.Email,
 		IsShopOwner: usr.IsShopOwner,
-	}, cnf.JWTSecret)
+	}, h.conf.JWTSecret)
+
 	if err != nil {
-		http.Error(w, "Internal Server", http.StatusInternalServerError)
+		utils.SendError(w, http.StatusInternalServerError, "Internal Server")
 		return
 	}
 	utils.SendData(w, accessToken, http.StatusOK)

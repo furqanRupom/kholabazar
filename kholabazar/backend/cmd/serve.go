@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"kholabazar/config"
+	"kholabazar/repo"
 	"kholabazar/rest"
 	"kholabazar/rest/handlers/product"
 	"kholabazar/rest/handlers/review"
@@ -12,8 +13,10 @@ import (
 func Serve() {
 	conf := config.GetConfig()
 	middleware := middleware.NewMiddlewares(conf)
-	productHandler := product.NewHandler(middleware)
-	userHandler := user.NewHandler()
+	productRepo := repo.NewProductRepo()
+	userRepo := repo.NewUserRepo()
+	productHandler := product.NewHandler(middleware, productRepo)
+	userHandler := user.NewHandler(userRepo, conf)
 	reviewHandler := review.NewHandler()
 	server := rest.NewServer(
 		conf,
