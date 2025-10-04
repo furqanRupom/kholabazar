@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	"kholabazar/repo"
 	"kholabazar/utils"
 	"net/http"
@@ -22,7 +21,6 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&req)
 	if err != nil {
-		fmt.Println(err)
 		utils.SendError(w, http.StatusInternalServerError, "Please give me valid JSON!")
 		return
 	}

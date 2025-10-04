@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"fmt"
 	"kholabazar/utils"
 	"net/http"
 )
@@ -20,6 +21,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	usr, err := h.userRepo.Find(req.Email, req.Password)
+	fmt.Println(err)
 	if err != nil {
 		utils.SendError(w, http.StatusBadRequest, "User find failed!")
 	}
