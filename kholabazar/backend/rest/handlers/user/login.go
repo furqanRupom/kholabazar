@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"kholabazar/config"
 	"kholabazar/utils"
 	"net/http"
 )
@@ -13,15 +12,14 @@ type ReqLogin struct {
 }
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	cnf := config.GetConfig()
-	var reqLogin ReqLogin
+	var req ReqLogin
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&reqLogin)
+	err := decoder.Decode(&req)
 	if err != nil {
 		utils.SendError(w, http.StatusBadRequest, "Invalid data!")
 		return
 	}
-	usr, err := h.userRepo.Find(reqLogin.Email, reqLogin.Password)
+	usr, err := h.userRepo.Find(req.Email, req.Password)
 	if err != nil {
 		utils.SendError(w, http.StatusBadRequest, "User find failed!")
 	}
@@ -35,7 +33,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		LastName:    usr.LastName,
 		Email:       usr.Email,
 		IsShopOwner: usr.IsShopOwner,
-	}, cnf.JWTSecret)
+	}, h.conf.JWTSecret)
 
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Internal Server")

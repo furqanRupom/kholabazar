@@ -14,9 +14,9 @@ func Serve() {
 	conf := config.GetConfig()
 	middleware := middleware.NewMiddlewares(conf)
 	productRepo := repo.NewProductRepo()
-	productHandler := product.NewHandler(middleware,productRepo)
 	userRepo := repo.NewUserRepo()
-	userHandler := user.NewHandler(userRepo)
+	productHandler := product.NewHandler(middleware, productRepo)
+	userHandler := user.NewHandler(userRepo, conf)
 	reviewHandler := review.NewHandler()
 	server := rest.NewServer(
 		conf,
