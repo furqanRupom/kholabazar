@@ -15,7 +15,7 @@ import (
 
 func Serve() {
 	conf := config.GetConfig()
-	dbCon, err := db.NewConnection()
+	dbCon, err := db.NewConnection(conf.DB)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
