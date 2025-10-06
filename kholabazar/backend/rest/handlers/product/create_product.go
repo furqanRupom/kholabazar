@@ -27,7 +27,7 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	createProduct, err := h.productRepo.Create(repo.Product{
 		Name:        req.Name,
-		Image:       req.Name,
+		Image:       req.Image,
 		Price:       req.Price,
 		Description: req.Description,
 		Category:    req.Category,

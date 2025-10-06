@@ -6,8 +6,8 @@ import (
 )
 
 func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
-	productList,error := h.productRepo.List()
-	if error != nil {
+	productList,err := h.productRepo.List()
+	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to load product list")
 		return
 	}

@@ -15,7 +15,7 @@ import (
 
 func Serve() {
 	conf := config.GetConfig()
-	dbCon, err := db.NewConnection()
+	dbCon, err := db.NewConnection(conf.DB)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -26,8 +26,12 @@ func Serve() {
 	if dbCon != nil {
 		fmt.Println("Database connected successfully!")
 	}
+	err = db.MigrateDB(dbCon,"./migrations")
+	if err != nil {
+		fmt.Println("Database migration failed!")
+	}
 	middleware := middleware.NewMiddlewares(conf)
-	productRepo := repo.NewProductRepo()
+	productRepo := repo.NewProductRepo(dbCon)
 	userRepo := repo.NewUserRepo(dbCon)
 	productHandler := product.NewHandler(middleware, productRepo)
 	userHandler := user.NewHandler(userRepo, conf)
