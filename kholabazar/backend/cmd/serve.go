@@ -6,10 +6,12 @@ import (
 	"kholabazar/infra/db"
 	"kholabazar/repo"
 	"kholabazar/rest"
-	"kholabazar/rest/handlers/product"
+	 productHandler "kholabazar/rest/handlers/product"
 	"kholabazar/rest/handlers/review"
-	"kholabazar/rest/handlers/user"
+	userHandler "kholabazar/rest/handlers/user"
 	middleware "kholabazar/rest/middlewares"
+	"kholabazar/user"
+	"kholabazar/product"
 	"os"
 )
 
@@ -31,15 +33,23 @@ func Serve() {
 		fmt.Println("Database migration failed!")
 	}
 	middleware := middleware.NewMiddlewares(conf)
+
+	// repos
 	productRepo := repo.NewProductRepo(dbCon)
 	userRepo := repo.NewUserRepo(dbCon)
-	productHandler := product.NewHandler(middleware, productRepo)
-	userHandler := user.NewHandler(userRepo, conf)
+
+	// domains
+	userSvc := user.NewService(userRepo)
+	productSvc := product.NewService(productRepo)
+
+	// handlers
+	prdHandler := productHandler.NewHandler(middleware, productSvc)
+	usrHandler := userHandler.NewHandler(conf,userSvc)
 	reviewHandler := review.NewHandler()
 	server := rest.NewServer(
 		conf,
-		userHandler,
-		productHandler,
+		usrHandler,
+		prdHandler,
 		reviewHandler,
 	)
 	server.Start()

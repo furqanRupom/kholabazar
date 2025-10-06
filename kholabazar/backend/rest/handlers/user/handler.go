@@ -2,17 +2,16 @@ package user
 
 import (
 	"kholabazar/config"
-	"kholabazar/repo"
 )
 
 type Handler struct {
-	userRepo repo.UserRepo
 	conf *config.Config
+	svc  Service
 }
 
-func NewHandler(userRepo repo.UserRepo,conf *config.Config) *Handler {
+func NewHandler(conf *config.Config, svc Service) *Handler {
 	return &Handler{
-		userRepo: userRepo,
 		conf: conf,
+		svc:  svc,
 	}
 }

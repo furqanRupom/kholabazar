@@ -2,7 +2,7 @@ package product
 
 import (
 	"encoding/json"
-	"kholabazar/repo"
+	"kholabazar/domain"
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
@@ -34,7 +34,7 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := h.productRepo.Get(pId)
+	product, err := h.svc.Get(pId)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to load product")
 		return
@@ -44,7 +44,7 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req.ID = pId
-	_, err = h.productRepo.Update(repo.Product{
+	_, err = h.svc.Update(domain.Product{
 		ID:          req.ID,
 		Name:        req.Name,
 		Image:       req.Image,

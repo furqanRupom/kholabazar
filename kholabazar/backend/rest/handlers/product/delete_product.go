@@ -15,7 +15,7 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Please give me valid format id", 400)
 	}
 
-	product, err := h.productRepo.Get(pId)
+	product, err := h.svc.Get(pId)
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Product deletion failed!")
 		return
@@ -25,7 +25,7 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.productRepo.Delete(product.ID)
+	h.svc.Delete(product.ID)
 
 	utils.SendData(w, "Product deleted successfully!", http.StatusOK)
 
