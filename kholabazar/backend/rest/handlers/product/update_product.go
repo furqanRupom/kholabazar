@@ -44,7 +44,15 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req.ID = pId
-	_, err = h.productRepo.Update(repo.Product(req))
+	_, err = h.productRepo.Update(repo.Product{
+		ID:          req.ID,
+		Name:        req.Name,
+		Image:       req.Image,
+		Price:       req.Price,
+		Description: req.Description,
+		Category:    req.Category,
+	})
+
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "Product Update failed")
 		return

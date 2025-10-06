@@ -27,7 +27,7 @@ func Serve() {
 		fmt.Println("Database connected successfully!")
 	}
 	middleware := middleware.NewMiddlewares(conf)
-	productRepo := repo.NewProductRepo()
+	productRepo := repo.NewProductRepo(dbCon)
 	userRepo := repo.NewUserRepo(dbCon)
 	productHandler := product.NewHandler(middleware, productRepo)
 	userHandler := user.NewHandler(userRepo, conf)
