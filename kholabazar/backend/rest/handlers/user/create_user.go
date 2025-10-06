@@ -2,7 +2,7 @@ package user
 
 import (
 	"encoding/json"
-	"kholabazar/repo"
+	"kholabazar/domain"
 	"kholabazar/utils"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusInternalServerError, "Please give me valid JSON!")
 		return
 	}
-	createUser, err := h.userRepo.Create(repo.User{
+	createUser, err := h.svc.Create(domain.User{
 		FirstName:   req.FirstName,
 		LastName:    req.LastName,
 		Email:       req.Email,

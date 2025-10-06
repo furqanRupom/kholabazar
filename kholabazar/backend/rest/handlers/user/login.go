@@ -20,7 +20,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusBadRequest, "Invalid data!")
 		return
 	}
-	usr, err := h.userRepo.Find(req.Email, req.Password)
+	usr, err := h.svc.Find(req.Email, req.Password)
 	fmt.Println(err)
 	if err != nil {
 		utils.SendError(w, http.StatusBadRequest, "User find failed!")

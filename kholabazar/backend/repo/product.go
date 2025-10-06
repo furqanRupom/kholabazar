@@ -2,7 +2,6 @@ package repo
 
 import (
 	"database/sql"
-
 	"github.com/jmoiron/sqlx"
 )
 
