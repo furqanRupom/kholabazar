@@ -11,6 +11,7 @@ import (
 	userHandler "kholabazar/rest/handlers/user"
 	middleware "kholabazar/rest/middlewares"
 	"kholabazar/user"
+	"kholabazar/product"
 	"os"
 )
 
@@ -39,9 +40,10 @@ func Serve() {
 
 	// domains
 	userSvc := user.NewService(userRepo)
+	productSvc := product.NewService(productRepo)
 
 	// handlers
-	prdHandler := productHandler.NewHandler(middleware, productRepo)
+	prdHandler := productHandler.NewHandler(middleware, productSvc)
 	usrHandler := userHandler.NewHandler(conf,userSvc)
 	reviewHandler := review.NewHandler()
 	server := rest.NewServer(

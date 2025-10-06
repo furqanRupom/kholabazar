@@ -3,7 +3,7 @@ package product
 import (
 	"encoding/json"
 	"fmt"
-	"kholabazar/repo"
+	"kholabazar/domain"
 	"kholabazar/utils"
 	"net/http"
 )
@@ -25,7 +25,7 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusInternalServerError, "Please give me valid JSON")
 		return
 	}
-	createProduct, err := h.productRepo.Create(repo.Product{
+	createProduct, err := h.svc.Create(domain.Product{
 		Name:        req.Name,
 		Image:       req.Image,
 		Price:       req.Price,
