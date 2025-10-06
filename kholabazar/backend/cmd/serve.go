@@ -26,6 +26,10 @@ func Serve() {
 	if dbCon != nil {
 		fmt.Println("Database connected successfully!")
 	}
+	err = db.MigrateDB(dbCon,"./migrations")
+	if err != nil {
+		fmt.Println("Database migration failed!")
+	}
 	middleware := middleware.NewMiddlewares(conf)
 	productRepo := repo.NewProductRepo(dbCon)
 	userRepo := repo.NewUserRepo(dbCon)
