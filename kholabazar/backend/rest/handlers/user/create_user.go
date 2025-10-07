@@ -34,6 +34,6 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.SendError(w, http.StatusInternalServerError, "User creation failed!")
 	}
-	utils.SendData(w, createUser, http.StatusCreated)
+	utils.SendData(w, http.StatusCreated,createUser)
 
 }

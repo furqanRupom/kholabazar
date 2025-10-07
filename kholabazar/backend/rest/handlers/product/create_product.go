@@ -36,6 +36,6 @@ func (h *Handler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusInternalServerError, "Production creation failed!")
 		return
 	}
-	utils.SendData(w, createProduct, 201)
+	utils.SendData(w,http.StatusCreated,createProduct)
 
 }

@@ -41,6 +41,6 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusInternalServerError, "Internal Server")
 		return
 	}
-	utils.SendData(w, accessToken, http.StatusOK)
+	utils.SendData(w, http.StatusOK, accessToken)
 
 }

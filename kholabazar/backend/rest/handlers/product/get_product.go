@@ -23,5 +23,5 @@ func (h *Handler) GetProduct(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusNotFound, "Product not found!")
 		return
 	}
-	utils.SendData(w, product, http.StatusOK)
+	utils.SendData(w,http.StatusOK,product)
 }
