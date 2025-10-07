@@ -1,23 +1,11 @@
 package product
 
 import (
-	"kholabazar/domain"
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
 )
 
-type PaginatedData struct {
-	Meta Pagination        `json:"meta"`
-	Data []*domain.Product `json:"data"`
-}
-
-type Pagination struct {
-	Limit      int64 `json:"limit"`
-	Page       int64 `json:"page"`
-	TotalPages int64 `json:"totalPages"`
-	TotalItems int64 `json:"totalItems"`
-}
 
 func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	reqQuery := r.URL.Query()
@@ -41,14 +29,5 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	}
 	count, _ := h.svc.Count()
 
-	paginatedData := PaginatedData{
-		Meta: Pagination{
-			Page:       page,
-			Limit:      limit,
-			TotalPages: count / limit,
-			TotalItems: count,
-		},
-		Data: productList,
-	}
-	utils.SendData(w, http.StatusOK, paginatedData)
+	utils.SendPage(w, productList,page,limit,count)
 }
