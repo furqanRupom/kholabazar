@@ -27,6 +27,6 @@ func (h *Handler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
 	h.svc.Delete(product.ID)
 
-	utils.SendData(w, "Product deleted successfully!", http.StatusOK)
+	utils.SendData(w,http.StatusOK, "Product deleted successfully!")
 
 }

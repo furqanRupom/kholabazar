@@ -58,6 +58,6 @@ func (h *Handler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.SendData(w, "Product updated successfully!", 200)
+	utils.SendData(w,http.StatusOK,"Product updated successfully!")
 
 }
