@@ -4,8 +4,10 @@ import (
 	"kholabazar/utils"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
+var count int64
 
 func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	reqQuery := r.URL.Query()
@@ -27,7 +29,41 @@ func (h *Handler) GetProducts(w http.ResponseWriter, r *http.Request) {
 		utils.SendError(w, http.StatusInternalServerError, "Failed to load product list")
 		return
 	}
-	count, _ := h.svc.Count()
 
-	utils.SendPage(w, productList,page,limit,count)
+	/*
+		wg := WaitGroup {
+		 noCopy : noCopy{},
+		 state : atomic.uint64 {
+		  _ : noCopy
+		  _ : align64
+		  v : uint64
+		 },
+		 sema : 0
+		}
+
+	*/
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		count1, _ := h.svc.Count()
+		count = count1
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		count1, _ := h.svc.Count()
+		count = count1
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		count1, _ := h.svc.Count()
+		count = count1
+	}()
+	wg.Wait()
+
+	utils.SendPage(w, productList, page, limit, count)
 }
